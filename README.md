@@ -63,3 +63,15 @@ create table esquema.nuevacapadepuntos as select ST_PointOnSurface (campodelageo
 ```
 Ejemplo: create table esquema01.municipios_pto_inside as select ST_PointOnSurface (geom), codmun, municipio, isla from esquema01.municipios;
 ```
+# Añadir antiguedades del omisor a lass construcciones
+
+Creamos un CSV desde el omisor con lo campos municipio, referencia, anyo
+Añadimos columna anyo en la tabla del municipio en PostGis
+Actualizamos campo
+```
+copy antiguedad (municipio, referencia, anyo) from 'C:\a\CAT\municipio.csv' delimiter ';' csv header;
+
+update municipio set anyo= antiguedad.anyo
+from antiguedad
+where antiguedad.referencia=cox.refcat
+``` 
