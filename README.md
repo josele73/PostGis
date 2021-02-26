@@ -71,7 +71,9 @@ Actualizamos campo
 ```
 copy antiguedad (municipio, referencia, anyo) from 'C:\a\CAT\municipio.csv' delimiter ';' csv header;
 
-update municipio set anyo= antiguedad.anyo
-from antiguedad
-where antiguedad.referencia=cox.refcat
+ALTER TABLE municipio ADD COLUMN anyo integer constraint;
+
+UPDATE municipio SET anyo= antiguedad.anyo
+FROM antiguedad
+WHERE antiguedad.referencia=cox.refcat;
 ``` 
