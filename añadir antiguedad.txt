@@ -1,0 +1,8 @@
+COPY antiguedad (municipio, referencia, anyo) FROM 'C:\a\CAT\cox.csv' DELIMITER ';' CSV HEADER;
+
+ALTER TABLE municipio ADD COLUMN anyo integer constraint;
+
+UPDATE cox
+SET anyo= antiguedad.anyo
+FROM antiguedad
+WHERE antiguedad.referencia=cox.refcat
