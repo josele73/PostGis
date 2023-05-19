@@ -79,7 +79,7 @@ WHERE antiguedad.referencia=cox.refcat;
 ``` 
 
 # Crear taba incidencias 
-
+``` 
 CREATE TABLE incidencias (
   id serial PRIMARY KEY,
   municipio character varying(3),
@@ -89,9 +89,9 @@ CREATE TABLE incidencias (
   fecha timestamp,
   usuario character varying(100)
 );
-
+``` 
 # Trigger para añadir la referencia catastral con la que intersecta
-
+``` 
 CREATE OR REPLACE FUNCTION actualizar_referencia()
   RETURNS TRIGGER AS $$
 BEGIN
@@ -104,7 +104,7 @@ CREATE TRIGGER incidencias_referencia_trigger
   BEFORE INSERT ON incidencias
   FOR EACH ROW
   EXECUTE PROCEDURE actualizar_referencia();
-
+``` 
 
 
 
