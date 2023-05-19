@@ -77,3 +77,34 @@ UPDATE municipio SET anyo= antiguedad.anyo
 FROM antiguedad
 WHERE antiguedad.referencia=cox.refcat;
 ``` 
+
+# Crear taba incidencias 
+
+CREATE TABLE incidencias (
+  id serial PRIMARY KEY,
+  municipio character varying(3),
+  comentario character varying(250),
+  geom geometry(Point, 25830),
+  referencia character varying(14),
+  fecha timestamp,
+  usuario character varying(100)
+);
+
+# Trigger para añadir la referencia catastral con la que intersecta
+
+CREATE OR REPLACE FUNCTION actualizar_referencia()
+  RETURNS TRIGGER AS $$
+BEGIN
+  NEW.referencia := (SELECT refcat FROM parcelas_torrevieja WHERE ST_Intersects(NEW.geom, geom) LIMIT 1);
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER incidencias_referencia_trigger
+  BEFORE INSERT ON incidencias
+  FOR EACH ROW
+  EXECUTE PROCEDURE actualizar_referencia();
+
+
+
+
