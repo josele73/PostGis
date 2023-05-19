@@ -78,7 +78,8 @@ FROM antiguedad
 WHERE antiguedad.referencia=cox.refcat;
 ``` 
 
-# Crear taba incidencias 
+# Crear tabla incidencias 
+
 ``` 
 CREATE TABLE incidencias (
   id serial PRIMARY KEY,
@@ -91,11 +92,13 @@ CREATE TABLE incidencias (
 );
 ``` 
 # Trigger para añadir la referencia catastral con la que intersecta
+
+Si no intersecta con nada se añade valor "00000000000000"
 ``` 
 CREATE OR REPLACE FUNCTION actualizar_referencia()
   RETURNS TRIGGER AS $$
 BEGIN
-  NEW.referencia := (SELECT refcat FROM parcelas_torrevieja WHERE ST_Intersects(NEW.geom, geom) LIMIT 1);
+  NEW.referencia := COALESCE((SELECT refcat FROM parcelas_torrevieja WHERE ST_Intersects(NEW.geom, geom) LIMIT 1), '00000000000000');
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -106,5 +109,21 @@ CREATE TRIGGER incidencias_referencia_trigger
   EXECUTE PROCEDURE actualizar_referencia();
 ``` 
 
+# Trigger para actualizar la fecha
+
+``` 
+CREATE OR REPLACE FUNCTION actualizar_fecha()
+  RETURNS TRIGGER AS $$
+BEGIN
+  NEW.fecha := now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER incidencias_fecha_trigger
+  BEFORE INSERT ON incidencias
+  FOR EACH ROW
+  EXECUTE PROCEDURE actualizar_fecha();
+``` 
 
 
